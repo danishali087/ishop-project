@@ -43,3 +43,15 @@ ishop/
 ├── server/
 │   └── api.js
 └── package.json
+
+## 🚀 How To Run
+
+1. Install dependencies
+2. npm install
+3. Start server - node server/api.js
+4.  Open browser - http://localhost:4400
+
+  ## 👨‍💻 Developer
+
+**Danish Ali**
+GitHub: [@danishali087](https://github.com/danishali087)
