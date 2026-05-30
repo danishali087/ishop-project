@@ -26,3 +26,20 @@ A full stack ecommerce web application built with Node.js, Express, PostgreSQL a
 - **API:** FakeStore API
 
 ## 📁 Project Structure
+ishop/
+├── public/
+│   ├── login.html
+│   ├── register.html
+│   ├── dashboard.html
+│   ├── products.html
+│   ├── product-details.html
+│   ├── cart.html
+│   ├── wishlist.html
+│   ├── checkout.html
+│   ├── order-summary.html
+│   ├── payment.html
+│   ├── admin-login.html
+│   └── admin.html
+├── server/
+│   └── api.js
+└── package.json
