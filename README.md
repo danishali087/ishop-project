@@ -50,6 +50,9 @@ ishop/
 2. npm install
 3. Start server - node server/api.js
 4.  Open browser - http://localhost:4400
+  
+    ## 📸 Screenshots
+   images/127.0.0.1_5500_public_admin.html.png 
 
 
   ## 👨‍💻 Developer
