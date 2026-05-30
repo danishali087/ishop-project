@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<title>Ishop Login</title>
+
+<meta charset="UTF-8">
+
+<link rel="stylesheet"
+      href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+<link rel="stylesheet"
+      href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+
+
+</head>
+
+<body class="container-fluid bg-light">
+
+
+<div class="row justify-content-center mt-5">
+
+    <div class="col-4">
+
+        <div class="card shadow-lg">
+
+            <div class="card-header bg-primary text-white text-center">
+
+                <h3>
+                    <span class="bi bi-person-circle"></span>
+                    Customer Login
+                </h3>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+
+                    <label>User Id</label>
+
+                    <input type="text"
+                           id="UserId"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>Password</label>
+
+                    <input type="password"
+                           id="Password"
+                           class="form-control">
+
+                </div>
+
+            </div>
+
+            
+
+
+<div class="card-footer">
+
+
+    <button class="btn btn-success w-100"
+            id="btnLogin">
+    
+        Login
+    
+    </button>
+    
+    <div class="text-center mt-3">
+    
+        <a href="register.html"
+           class="text-decoration-none">
+    
+            New User ? Register
+    
+        </a>
+    
+    </div>
+    
+    </div>
+    
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+$(function(){
+
+    $("#btnLogin").click(function(){
+
+        var user = {
+
+            UserId: $("#UserId").val(),
+            Password: $("#Password").val()
+
+        };
+
+        $.ajax({
+
+            method: "POST",
+
+            url: "http://localhost:4400/logincustomer",
+
+            data: user,
+
+            success: function(response){
+
+                if(response.success){
+
+                    alert(response.message);
+
+                    localStorage.setItem(
+                        "username",
+                        response.user.username
+                    );
+
+                    window.location.href = "dashboard.html";
+
+                }
+                else {
+
+                    alert(response.message);
+
+                }
+
+            },
+
+            error: function(){
+
+                alert("Login Failed");
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+</body>
+
+</html>

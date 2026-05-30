@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<title>Ishop Products</title>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+      href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+<link rel="stylesheet"
+      href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+
+
+<style>
+
+body{
+    background-color:#eaeded;
+}
+
+
+/* PRODUCT CARD */
+
+.product-card{
+
+    height:100%;
+    transition:0.3s;
+    border:none;
+    border-radius:10px;
+
+}
+
+
+.product-card:hover{
+
+    transform:scale(1.02);
+    box-shadow:0 0 15px rgba(0,0,0,0.2);
+
+}
+
+
+/* PRODUCT IMAGE */
+
+.product-image{
+
+    height:220px;
+    object-fit:contain;
+    padding:20px;
+
+}
+
+
+/* PRICE */
+
+.price{
+
+    font-size:22px;
+    font-weight:bold;
+    color:#B12704;
+
+}
+
+
+/* RATING */
+
+.rating{
+
+    color:#ff9900;
+    font-weight:bold;
+
+}
+
+
+/* LOGO */
+
+.navbar-brand{
+
+    font-size:28px;
+    font-weight:bold;
+
+}
+
+
+/* CATEGORY BUTTON */
+
+.category-btn{
+
+    border-radius:20px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-dark bg-dark px-4">
+
+    <!-- LEFT - LOGO -->
+    <a href="#" class="navbar-brand text-white text-decoration-none">
+        <span class="bi bi-shop"></span>
+        Ishop
+    </a>
+
+    <!-- MIDDLE - SEARCH BOX -->
+    <div class="d-flex mx-auto" style="width:400px;">
+
+        <input type="text"
+               id="searchInput"
+               class="form-control me-2"
+               placeholder="🔍 Search products...">
+
+        <button class="btn btn-warning"
+                onclick="SearchProducts()">
+            <span class="bi bi-search"></span>
+        </button>
+
+    </div>
+
+    <!-- RIGHT - BUTTONS -->
+    <div class="d-flex align-items-center gap-2">
+
+        <a href="dashboard.html" class="btn btn-outline-light">
+            Dashboard
+        </a>
+
+        <a href="login.html" class="btn btn-outline-light">
+            Login
+        </a>
+
+        <a href="register.html" class="btn btn-warning">
+            Register
+        </a>
+        <a href="wishlist.html" class="btn btn-outline-light me-2">
+            <span class="bi bi-heart"></span>
+            Wishlist
+        </a>
+        <a href="cart.html" class="btn btn-warning position-relative">
+            <span class="bi bi-cart3"></span>
+            Cart
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  id="cartCount">0</span>
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- CATEGORY SECTION -->
+
+<div class="container-fluid mt-3">
+
+
+<div class="d-flex gap-2 flex-wrap">
+
+    <button class="btn btn-dark category-btn"
+            onclick="LoadProducts('all')">
+
+        All
+
+    </button>
+
+    <button class="btn btn-outline-dark category-btn"
+            onclick="LoadProducts('electronics')">
+
+        Electronics
+
+    </button>
+
+    <button class="btn btn-outline-dark category-btn"
+            onclick="LoadProducts('jewelery')">
+
+        Jewelery
+
+    </button>
+
+    <button class="btn btn-outline-dark category-btn"
+            onclick="LoadProducts(`men's clothing`)">
+
+        Men's Clothing
+
+    </button>
+
+    <button class="btn btn-outline-dark category-btn"
+            onclick="LoadProducts(`women's clothing`)">
+
+        Women's Clothing
+
+    </button>
+
+</div>
+
+
+</div>
+
+<!-- PRODUCTS -->
+
+<div class="container-fluid mt-4">
+
+
+<div class="row"
+     id="productsContainer">
+
+</div>
+
+
+</div>
+
+<script>
+
+$(function(){
+
+    // CART ARRAY
+
+    var cartItems = [];
+
+
+
+    // UPDATE CART COUNT
+
+    function UpdateCartCount(){
+
+        $("#cartCount").html(cartItems.length);
+
+    }
+
+
+
+    // LOAD CART FROM LOCAL STORAGE
+
+    if(localStorage.getItem("cart") != null){
+
+        cartItems = JSON.parse(
+            localStorage.getItem("cart")
+        );
+
+        UpdateCartCount();
+
+    }
+
+
+
+    // ADD TO CART FUNCTION
+
+    window.AddToCart = function(product){
+
+        cartItems.push(product);
+
+        localStorage.setItem(
+            "cart",
+            JSON.stringify(cartItems)
+        );
+
+        UpdateCartCount();
+
+        alert(product.title + " Added To Cart");
+
+    }
+
+
+
+    // LOAD PRODUCTS FUNCTION
+
+    window.LoadProducts = function(category = "all"){
+
+        $("#productsContainer").html("");
+
+
+        var apiUrl = "";
+
+
+        // ALL PRODUCTS
+
+        if(category == "all"){
+
+            apiUrl = "https://fakestoreapi.com/products";
+
+        }
+
+        // CATEGORY PRODUCTS
+
+        else{
+
+            apiUrl = "https://fakestoreapi.com/products/category/" + category;
+
+        }
+
+
+
+        $.ajax({
+
+            method:"GET",
+
+            url:apiUrl,
+
+            success:function(products){
+
+                console.log(products);
+
+
+                products.forEach(function(product){
+
+                    var card = `
+
+                        <div class="col-md-3 mb-4">
+
+                            <div class="card product-card h-100">
+
+                                <img src="${product.image}"
+                                     class="card-img-top product-image">
+
+                                <div class="card-body d-flex flex-column">
+
+                                    <h6 class="card-title">
+
+                                        ${product.title}
+
+                                    </h6>
+
+                                    <p class="text-muted text-capitalize">
+
+                                        ${product.category}
+
+                                    </p>
+
+                                    <div class="rating mb-2">
+
+                                        ⭐ ${product.rating.rate}
+
+                                    </div>
+
+                                    <div class="price mb-3">
+
+                                        ₹ ${product.price}
+
+                                    </div>
+
+                                    <button class="btn btn-warning mt-auto w-100"
+                                            onclick='AddToCart(${JSON.stringify(product)})'>
+
+                                        <span class="bi bi-cart-plus"></span>
+
+                                        Add To Cart
+
+                                    </button>
+                                    <a href="product-details.html?id=${product.id}" 
+                                     class="btn btn-outline-dark mt-2 w-100">
+                                     <span class="bi bi-eye"></span>
+                                    View Details
+                                    </a>
+
+                                    <button class="btn btn-outline-danger mt-2 w-100"
+                                    onclick="AddToWishlist(${product.id})">
+                                    <span class="bi bi-heart"></span>
+                                     Wishlist
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+                    $("#productsContainer").append(card);
+
+                });
+
+            },
+
+            error:function(){
+
+                alert("Unable To Load Products");
+
+            }
+
+        });
+
+    }
+
+
+
+    // INITIAL LOAD
+     // SEARCH FUNCTION
+     // ADD TO WISHLIST FUNCTION
+window.AddToWishlist = function(productId){
+
+// FIND PRODUCT FROM LOADED PRODUCTS
+$.ajax({
+
+    method: "GET",
+    url: "https://fakestoreapi.com/products/" + productId,
+
+    success: function(product){
+
+        var wishlist = [];
+
+        // LOAD EXISTING WISHLIST
+        if(localStorage.getItem("wishlist") != null){
+            wishlist = JSON.parse(localStorage.getItem("wishlist"));
+        }
+
+        // CHECK IF ALREADY IN WISHLIST
+        var exists = wishlist.find(function(item){
+            return item.id == product.id;
+        });
+
+        if(exists){
+            alert("Already in Wishlist!");
+            return;
+        }
+
+        // ADD TO WISHLIST
+        wishlist.push(product);
+
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+        alert(product.title + " Added to Wishlist! ❤️");
+
+    }
+
+});
+
+}
+window.SearchProducts = function(){
+
+// GET KEYWORD FROM INPUT
+var keyword = $("#searchInput").val().toLowerCase();
+
+// IF EMPTY - LOAD ALL
+if(keyword == ""){
+    LoadProducts("all");
+    return;
+}
+
+// FETCH ALL PRODUCTS THEN FILTER
+$.ajax({
+
+    method: "GET",
+    url: "https://fakestoreapi.com/products",
+
+    success: function(products){
+
+        // FILTER BY TITLE
+        var filtered = products.filter(function(product){
+            return product.title.toLowerCase().includes(keyword);
+        });
+
+        // CLEAR CONTAINER
+        $("#productsContainer").html("");
+
+        // IF NO RESULTS
+        if(filtered.length == 0){
+            $("#productsContainer").html(`
+                <div class="text-center mt-5">
+                    <h4 class="text-muted">No products found for "${keyword}"</h4>
+                </div>
+            `);
+            return;
+        }
+
+        // SHOW FILTERED PRODUCTS
+        filtered.forEach(function(product){
+
+            var card = `
+                <div class="col-md-3 mb-4">
+                    <div class="card product-card h-100">
+                        <img src="${product.image}"
+                             class="card-img-top product-image">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">${product.title}</h6>
+                            <p class="text-muted text-capitalize">${product.category}</p>
+                            <div class="rating mb-2">⭐ ${product.rating.rate}</div>
+                            <div class="price mb-3">₹ ${product.price}</div>
+                            <button class="btn btn-warning mt-auto w-100"
+                                    onclick='AddToCart(${JSON.stringify(product)})'>
+                                <span class="bi bi-cart-plus"></span>
+                                Add To Cart
+                            </button>
+                            <a href="product-details.html?id=${product.id}"
+                               class="btn btn-outline-dark mt-2 w-100">
+                                <span class="bi bi-eye"></span>
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            $("#productsContainer").append(card);
+
+        });
+
+    },
+
+    error: function(){
+        alert("Unable to search products");
+    }
+
+});
+
+}
+    LoadProducts();
+
+});
+
+</script>
+
+</body>
+
+</html>

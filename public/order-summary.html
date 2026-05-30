@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Order Summary</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+
+    <style>
+
+        body {
+            background-color: #eaeded;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #28a745;
+        }
+
+        .order-card {
+            border-radius: 10px;
+            border: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-4">
+
+    <a class="navbar-brand">
+        <span class="bi bi-shop"></span>
+        Ishop
+    </a>
+
+    <a href="products.html" class="btn btn-warning">
+        <span class="bi bi-shop"></span>
+        Continue Shopping
+    </a>
+
+</nav>
+
+
+<div class="container mt-4">
+
+
+    <!-- SUCCESS MESSAGE -->
+    <div class="text-center mb-4">
+
+        <div class="success-icon">
+            <span class="bi bi-check-circle-fill"></span>
+        </div>
+
+        <h2 class="text-success mt-2">Order Placed Successfully!</h2>
+
+        <p class="text-muted">
+            Thank you for shopping with Ishop
+        </p>
+
+        <h5>
+            Order ID :
+            <span class="text-primary" id="orderId"></span>
+        </h5>
+
+    </div>
+
+
+    <div class="row">
+
+
+        <!-- LEFT - DELIVERY AND PAYMENT -->
+        <div class="col-md-6">
+
+
+            <!-- DELIVERY ADDRESS -->
+            <div class="card shadow order-card mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-geo-alt"></span>
+                        Delivery Address
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <p>
+                        <span class="bi bi-person"></span>
+                        <strong> Name : </strong>
+                        <span id="fullName"></span>
+                    </p>
+
+                    <p>
+                        <span class="bi bi-telephone"></span>
+                        <strong> Mobile : </strong>
+                        <span id="mobile"></span>
+                    </p>
+
+                    <p>
+                        <span class="bi bi-house"></span>
+                        <strong> Address : </strong>
+                        <span id="address"></span>
+                    </p>
+
+                    <p>
+                        <span class="bi bi-map"></span>
+                        <strong> City : </strong>
+                        <span id="city"></span> ,
+                        <span id="state"></span> -
+                        <span id="pincode"></span>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT METHOD -->
+            <div class="card shadow order-card mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-credit-card"></span>
+                        Payment Method
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <h5 id="paymentMethod"></h5>
+
+                    <p class="text-muted" id="paymentNote"></p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RIGHT - ORDER ITEMS -->
+        <div class="col-md-6">
+
+            <div class="card shadow order-card mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-bag"></span>
+                        Ordered Items
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- ITEMS LIST -->
+                    <div id="orderItems">
+                    </div>
+
+                    <hr>
+
+                    <!-- TOTAL -->
+                    <div class="d-flex justify-content-between">
+                        <h5>Total Amount</h5>
+                        <h5 class="text-danger">
+                            ₹ <span id="totalAmount"></span>
+                        </h5>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+            <div class="d-grid gap-2">
+
+                <a href="products.html"
+                   class="btn btn-warning btn-lg">
+                    <span class="bi bi-shop"></span>
+                    Continue Shopping
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+$(function(){
+
+    // LOAD ORDER DETAILS FROM LOCALSTORAGE
+    var orderDetails = null;
+
+    if(localStorage.getItem("orderDetails") != null){
+        orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+    } else {
+        // IF NO ORDER - GO BACK
+        alert("No order found!");
+        window.location.href = "products.html";
+        return;
+    }
+
+
+    // GENERATE RANDOM ORDER ID
+    var orderId = "ISH" + Math.floor(Math.random() * 900000 + 100000);
+    $("#orderId").html(orderId);
+
+
+    // SHOW DELIVERY ADDRESS
+    $("#fullName").html(orderDetails.fullName);
+    $("#mobile").html(orderDetails.mobile);
+    $("#address").html(orderDetails.address);
+    $("#city").html(orderDetails.city);
+    $("#state").html(orderDetails.state);
+    $("#pincode").html(orderDetails.pincode);
+
+
+    // SHOW PAYMENT METHOD
+    if(orderDetails.payment == "COD"){
+
+        $("#paymentMethod").html(
+            '<span class="bi bi-cash text-success"></span> Cash On Delivery'
+        );
+
+        $("#paymentNote").html(
+            "Pay when your order arrives at your door"
+        );
+
+    } else {
+
+        $("#paymentMethod").html(
+            '<span class="bi bi-credit-card text-primary"></span> Online Payment'
+        );
+
+        $("#paymentNote").html(
+            "Payment completed successfully"
+        );
+
+    }
+
+
+    // SHOW ORDERED ITEMS
+    orderDetails.items.forEach(function(product){
+
+        if(!product.quantity){ product.quantity = 1; }
+
+        var item = `
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <img src="${product.image}"
+                         style="height:50px; width:50px; object-fit:contain;">
+
+                    <div>
+                        <p class="mb-0 fw-bold">
+                            ${product.title.substring(0, 25)}...
+                        </p>
+                        <small class="text-muted">
+                            Qty : ${product.quantity}
+                        </small>
+                    </div>
+
+                </div>
+
+                <span class="text-danger fw-bold">
+                    ₹ ${(product.price * product.quantity).toFixed(2)}
+                </span>
+
+            </div>
+
+        `;
+
+        $("#orderItems").append(item);
+
+    });
+
+
+    // SHOW TOTAL
+    $("#totalAmount").html(orderDetails.total);
+
+
+    // CLEAR CART AFTER ORDER
+    localStorage.removeItem("cart");
+    localStorage.removeItem("orderDetails");
+
+});
+
+</script>
+
+</body>
+</html>

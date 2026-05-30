@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Payment</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+
+    <style>
+
+        body {
+            background-color: #eaeded;
+        }
+
+        .payment-card {
+            border-radius: 10px;
+            border: none;
+        }
+
+        /* CARD NUMBER STYLING */
+        .card-number {
+            letter-spacing: 4px;
+            font-size: 18px;
+        }
+
+        /* PAYMENT OPTION TAB */
+        .payment-tab {
+            cursor: pointer;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .payment-tab:hover {
+            border-color: #ffc107;
+        }
+
+        .payment-tab.active {
+            border-color: #ffc107;
+            background-color: #fff8e1;
+        }
+
+        .payment-tab i {
+            font-size: 30px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-4">
+
+    <a class="navbar-brand">
+        <span class="bi bi-shop"></span>
+        Ishop Payment
+    </a>
+
+    <a href="checkout.html" class="btn btn-warning">
+        <span class="bi bi-arrow-left"></span>
+        Back To Checkout
+    </a>
+
+</nav>
+
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7">
+
+
+            <!-- PAYMENT OPTIONS TABS -->
+            <div class="card shadow payment-card mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-credit-card"></span>
+                        Select Payment Option
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-3 mb-4">
+
+                        <!-- CARD OPTION -->
+                        <div class="col-4">
+                            <div class="payment-tab active"
+                                 id="tabCard"
+                                 onclick="ShowTab('card')">
+                                <i class="bi bi-credit-card text-primary"></i>
+                                <p class="mb-0 mt-2 fw-bold">Card</p>
+                            </div>
+                        </div>
+
+                        <!-- UPI OPTION -->
+                        <div class="col-4">
+                            <div class="payment-tab"
+                                 id="tabUpi"
+                                 onclick="ShowTab('upi')">
+                                <i class="bi bi-phone text-success"></i>
+                                <p class="mb-0 mt-2 fw-bold">UPI</p>
+                            </div>
+                        </div>
+
+                        <!-- NETBANKING OPTION -->
+                        <div class="col-4">
+                            <div class="payment-tab"
+                                 id="tabNet"
+                                 onclick="ShowTab('net')">
+                                <i class="bi bi-bank text-warning"></i>
+                                <p class="mb-0 mt-2 fw-bold">Net Banking</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- CARD PAYMENT FORM -->
+                    <div id="cardForm">
+
+                        <div class="mb-3">
+                            <label class="form-label">Card Number</label>
+                            <input type="text"
+                                   id="cardNumber"
+                                   class="form-control card-number"
+                                   placeholder="1234  5678  9012  3456"
+                                   maxlength="19">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Card Holder Name</label>
+                            <input type="text"
+                                   id="cardName"
+                                   class="form-control"
+                                   placeholder="Name on card">
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Expiry Date</label>
+                                <input type="text"
+                                       id="expiry"
+                                       class="form-control"
+                                       placeholder="MM / YY"
+                                       maxlength="5">
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <label class="form-label">CVV</label>
+                                <input type="password"
+                                       id="cvv"
+                                       class="form-control"
+                                       placeholder="***"
+                                       maxlength="3">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- UPI FORM -->
+                    <div id="upiForm" style="display:none;">
+
+                        <div class="mb-3">
+                            <label class="form-label">UPI ID</label>
+                            <input type="text"
+                                   id="upiId"
+                                   class="form-control"
+                                   placeholder="example@upi">
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <p class="text-muted">OR scan QR code</p>
+                            <!-- FAKE QR CODE -->
+                            <div class="border p-3 d-inline-block rounded">
+                                <div style="width:150px; height:150px; background: repeating-linear-gradient(
+                                    45deg,
+                                    #000,
+                                    #000 5px,
+                                    #fff 5px,
+                                    #fff 10px
+                                );">
+                                </div>
+                                <p class="mt-2 mb-0 text-muted small">
+                                    Scan to pay
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- NET BANKING FORM -->
+                    <div id="netForm" style="display:none;">
+
+                        <div class="mb-3">
+                            <label class="form-label">Select Bank</label>
+                            <select class="form-select" id="bankSelect">
+                                <option value="">-- Select Your Bank --</option>
+                                <option>State Bank of India</option>
+                                <option>HDFC Bank</option>
+                                <option>ICICI Bank</option>
+                                <option>Axis Bank</option>
+                                <option>Punjab National Bank</option>
+                                <option>Kotak Mahindra Bank</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">User ID</label>
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="Net banking user ID">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password"
+                                   class="form-control"
+                                   placeholder="Net banking password">
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAY NOW BUTTON -->
+                    <button class="btn btn-warning w-100 btn-lg mt-2"
+                            id="btnPayNow">
+                        <span class="bi bi-lock"></span>
+                        Pay Now ₹ <span id="payAmount"></span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RIGHT - ORDER TOTAL -->
+        <div class="col-md-4">
+
+            <div class="card shadow payment-card">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-bag"></span>
+                        Order Total
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div id="orderSummary">
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+                        <h5>Total</h5>
+                        <h5 class="text-danger">
+                            ₹ <span id="totalAmount"></span>
+                        </h5>
+                    </div>
+
+                    <div class="mt-3 text-center text-muted small">
+                        <span class="bi bi-shield-check text-success"></span>
+                        100% Secure Payment
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+$(function(){
+
+    // LOAD ORDER DETAILS
+    var orderDetails = null;
+
+    if(localStorage.getItem("orderDetails") != null){
+        orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+    } else {
+        alert("No order found!");
+        window.location.href = "products.html";
+        return;
+    }
+
+    // SHOW TOTAL AMOUNT
+    $("#payAmount").html(orderDetails.total);
+    $("#totalAmount").html(orderDetails.total);
+
+    // SHOW ORDER ITEMS
+    orderDetails.items.forEach(function(product){
+
+        if(!product.quantity){ product.quantity = 1; }
+
+        var item = `
+            <div class="d-flex justify-content-between mb-2">
+                <small>${product.title.substring(0, 20)}...</small>
+                <small class="text-danger fw-bold">
+                    ₹${(product.price * product.quantity).toFixed(2)}
+                </small>
+            </div>
+        `;
+
+        $("#orderSummary").append(item);
+
+    });
+
+
+    // SHOW TAB FUNCTION
+    window.ShowTab = function(tab){
+
+        // REMOVE ACTIVE FROM ALL TABS
+        $("#tabCard").removeClass("active");
+        $("#tabUpi").removeClass("active");
+        $("#tabNet").removeClass("active");
+
+        // HIDE ALL FORMS
+        $("#cardForm").hide();
+        $("#upiForm").hide();
+        $("#netForm").hide();
+
+        // SHOW SELECTED TAB AND FORM
+        if(tab == "card"){
+            $("#tabCard").addClass("active");
+            $("#cardForm").show();
+        }
+        else if(tab == "upi"){
+            $("#tabUpi").addClass("active");
+            $("#upiForm").show();
+        }
+        else if(tab == "net"){
+            $("#tabNet").addClass("active");
+            $("#netForm").show();
+        }
+
+    }
+
+
+    // FORMAT CARD NUMBER WITH SPACES
+    $("#cardNumber").on("input", function(){
+        var value = $(this).val().replace(/\s/g, "");
+        var formatted = value.match(/.{1,4}/g);
+        if(formatted){
+            $(this).val(formatted.join("  "));
+        }
+    });
+
+
+    // PAY NOW BUTTON
+    $("#btnPayNow").click(function(){
+
+        // SIMPLE VALIDATION FOR CARD
+        var activeTab = $(".payment-tab.active").attr("id");
+
+        if(activeTab == "tabCard"){
+            var cardNumber = $("#cardNumber").val();
+            var cardName   = $("#cardName").val();
+            var expiry     = $("#expiry").val();
+            var cvv        = $("#cvv").val();
+
+            if(cardNumber == "" || cardName == "" || 
+               expiry == "" || cvv == ""){
+                alert("Please fill all card details!");
+                return;
+            }
+        }
+
+        if(activeTab == "tabUpi"){
+            var upiId = $("#upiId").val();
+            if(upiId == ""){
+                alert("Please enter UPI ID!");
+                return;
+            }
+        }
+
+        if(activeTab == "tabNet"){
+            var bank = $("#bankSelect").val();
+            if(bank == ""){
+                alert("Please select a bank!");
+                return;
+            }
+        }
+
+        // SHOW PROCESSING
+        $("#btnPayNow").html(`
+            <span class="spinner-border spinner-border-sm"></span>
+            Processing Payment...
+        `);
+
+        $("#btnPayNow").prop("disabled", true);
+
+        // SIMULATE PAYMENT (2 seconds)
+        setTimeout(function(){
+            window.location.href = "order-summary.html";
+        }, 2000);
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

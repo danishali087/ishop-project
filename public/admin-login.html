@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Admin Login</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+
+    <style>
+
+        body {
+            background-color: #1a1a2e;
+        }
+
+        .admin-card {
+            border-radius: 15px;
+            border: none;
+        }
+
+    </style>
+
+</head>
+
+<body class="container-fluid">
+
+<div class="row justify-content-center mt-5">
+
+    <div class="col-md-4">
+
+        <div class="card shadow-lg admin-card">
+
+            <div class="card-header bg-dark text-white text-center py-4">
+
+                <h2>
+                    <span class="bi bi-shield-lock"></span>
+                    Admin Login
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Ishop Admin Panel
+                </p>
+
+            </div>
+
+            <div class="card-body p-4">
+
+                <div class="mb-3">
+                    <label class="form-label">Admin Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <span class="bi bi-person"></span>
+                        </span>
+                        <input type="text"
+                               id="Username"
+                               class="form-control"
+                               placeholder="Enter admin username">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <span class="bi bi-lock"></span>
+                        </span>
+                        <input type="password"
+                               id="Password"
+                               class="form-control"
+                               placeholder="Enter admin password">
+                    </div>
+                </div>
+
+                <button class="btn btn-warning w-100 btn-lg"
+                        id="btnAdminLogin">
+                    <span class="bi bi-box-arrow-in-right"></span>
+                    Login as Admin
+                </button>
+
+                <div class="text-center mt-3">
+                    <a href="login.html" class="text-muted text-decoration-none">
+                        <span class="bi bi-arrow-left"></span>
+                        Back to Customer Login
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+$(function(){
+
+    // IF ALREADY ADMIN LOGGED IN
+    if(localStorage.getItem("admin") != null){
+        window.location.href = "admin.html";
+    }
+
+    // ADMIN LOGIN BUTTON
+    $("#btnAdminLogin").click(function(){
+
+        var user = {
+            Username : $("#Username").val(),
+            Password : $("#Password").val()
+        };
+
+        if(user.Username == "" || user.Password == ""){
+            alert("Please fill all fields!");
+            return;
+        }
+
+        $.ajax({
+
+            method: "POST",
+            url: "http://localhost:4400/adminlogin",
+            data: user,
+
+            success: function(response){
+
+                if(response.success){
+
+                    // SAVE ADMIN SESSION
+                    localStorage.setItem("admin", user.Username);
+
+                    window.location.href = "admin.html";
+
+                } else {
+                    alert(response.message);
+                }
+
+            },
+
+            error: function(){
+                alert("Login Failed");
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

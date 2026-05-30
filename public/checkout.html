@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Checkout</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+
+    <style>
+
+        body {
+            background-color: #eaeded;
+        }
+
+        .section-card {
+            border-radius: 10px;
+            border: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-4">
+
+    <a class="navbar-brand">
+        <span class="bi bi-shop"></span>
+        Ishop Checkout
+    </a>
+
+    <a href="cart.html" class="btn btn-warning">
+        <span class="bi bi-arrow-left"></span>
+        Back To Cart
+    </a>
+
+</nav>
+
+
+<div class="container mt-4">
+
+    <div class="row">
+
+
+        <!-- LEFT - FORM -->
+        <div class="col-md-8">
+
+
+            <!-- DELIVERY ADDRESS -->
+            <div class="card shadow section-card mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-geo-alt"></span>
+                        Delivery Address
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text"
+                                   id="fullName"
+                                   class="form-control"
+                                   placeholder="Enter your full name">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="text"
+                                   id="mobile"
+                                   class="form-control"
+                                   placeholder="Enter mobile number">
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea id="address"
+                                  class="form-control"
+                                  rows="2"
+                                  placeholder="House no, Street, Area"></textarea>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">City</label>
+                            <input type="text"
+                                   id="city"
+                                   class="form-control"
+                                   placeholder="City">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">State</label>
+                            <input type="text"
+                                   id="state"
+                                   class="form-control"
+                                   placeholder="State">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Pincode</label>
+                            <input type="text"
+                                   id="pincode"
+                                   class="form-control"
+                                   placeholder="Pincode">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT METHOD -->
+            <div class="card shadow section-card mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-credit-card"></span>
+                        Payment Method
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- COD -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="payment"
+                               id="codOption"
+                               value="COD"
+                               checked>
+                        <label class="form-check-label" for="codOption">
+                            <span class="bi bi-cash"></span>
+                            Cash On Delivery (COD)
+                        </label>
+                    </div>
+
+                    <!-- ONLINE -->
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="payment"
+                               id="onlineOption"
+                               value="Online">
+                        <label class="form-check-label" for="onlineOption">
+                            <span class="bi bi-credit-card"></span>
+                            Online Payment
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PLACE ORDER BUTTON -->
+            <button class="btn btn-warning w-100 btn-lg mb-4"
+                    id="btnPlaceOrder">
+                <span class="bi bi-bag-check"></span>
+                Place Order
+            </button>
+
+
+        </div>
+
+
+        <!-- RIGHT - ORDER SUMMARY -->
+        <div class="col-md-4">
+
+            <div class="card shadow section-card">
+
+                <div class="card-header bg-dark text-white">
+                    <h5>
+                        <span class="bi bi-cart3"></span>
+                        Order Summary
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- CART ITEMS LIST -->
+                    <div id="summaryItems">
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+                        <span>Total Items</span>
+                        <span id="totalItems">0</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5>Total Amount</h5>
+                        <h5 class="text-danger">
+                            ₹ <span id="totalAmount">0</span>
+                        </h5>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+$(function(){
+
+    // LOAD CART
+    var cart = [];
+
+    if(localStorage.getItem("cart") != null){
+        cart = JSON.parse(localStorage.getItem("cart"));
+    }
+
+    // IF CART EMPTY - GO BACK
+    if(cart.length == 0){
+        alert("Your cart is empty!");
+        window.location.href = "products.html";
+        return;
+    }
+
+    // SHOW ORDER SUMMARY
+    var total = 0;
+    var totalItems = 0;
+
+    cart.forEach(function(product){
+
+        if(!product.quantity){ product.quantity = 1; }
+
+        total = total + (product.price * product.quantity);
+        totalItems = totalItems + product.quantity;
+
+        var item = `
+            <div class="d-flex justify-content-between mb-2">
+                <span>${product.title.substring(0, 20)}...</span>
+                <span>
+                    x${product.quantity} 
+                    ₹${(product.price * product.quantity).toFixed(2)}
+                </span>
+            </div>
+        `;
+
+        $("#summaryItems").append(item);
+
+    });
+
+    $("#totalAmount").html(total.toFixed(2));
+    $("#totalItems").html(totalItems);
+
+
+    // PLACE ORDER BUTTON
+    $("#btnPlaceOrder").click(function(){
+
+        // GET FORM VALUES
+        var fullName = $("#fullName").val();
+        var mobile   = $("#mobile").val();
+        var address  = $("#address").val();
+        var city     = $("#city").val();
+        var state    = $("#state").val();
+        var pincode  = $("#pincode").val();
+        var payment  = $("input[name='payment']:checked").val();
+
+        // SIMPLE VALIDATION
+        if(fullName == "" || mobile == "" || address == "" || 
+           city == "" || state == "" || pincode == ""){
+            alert("Please fill all fields!");
+            return;
+        }
+
+        // SAVE ORDER DETAILS TO LOCALSTORAGE
+        var orderDetails = {
+            fullName : fullName,
+            mobile   : mobile,
+            address  : address,
+            city     : city,
+            state    : state,
+            pincode  : pincode,
+            payment  : payment,
+            total    : total.toFixed(2),
+            items    : cart
+        };
+
+        localStorage.setItem(
+            "orderDetails",
+            JSON.stringify(orderDetails)
+        );
+
+        // GO TO ORDER SUMMARY PAGE
+       // CHECK PAYMENT METHOD
+if(payment == "COD"){
+    // COD - GO DIRECTLY TO ORDER SUMMARY
+    window.location.href = "order-summary.html";
+} else {
+    // ONLINE - GO TO PAYMENT PAGE
+    window.location.href = "payment.html";
+}
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

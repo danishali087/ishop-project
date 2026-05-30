@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Shopping Cart</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+
+    <style>
+
+        body {
+            background-color: #eaeded;
+        }
+
+        .cart-image {
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .total-box {
+            position: sticky;
+            top: 20px;
+        }
+
+        .qty-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-4">
+
+    <a class="navbar-brand">
+        <span class="bi bi-shop"></span>
+        Ishop Cart
+    </a>
+
+    <div>
+        <a href="products.html" class="btn btn-warning">
+            Continue Shopping
+        </a>
+    </div>
+
+</nav>
+
+
+<div class="container-fluid mt-4">
+
+    <div class="row">
+
+
+        <!-- CART ITEMS -->
+        <div class="col-8">
+            <div id="cartItems">
+            </div>
+        </div>
+
+
+        <!-- PRICE DETAILS -->
+        <div class="col-4">
+
+            <div class="card shadow total-box">
+
+                <div class="card-header bg-dark text-white">
+                    <h4>Price Details</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Total Items</span>
+                        <span id="totalItems">0</span>
+                    </div>
+
+                    <hr>
+
+                    <h5>
+                        Total :
+                        ₹ <span id="totalAmount">0</span>
+                    </h5>
+
+                    <a href="checkout.html" class="btn btn-warning w-100 mt-3">
+                        Proceed To Checkout
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+$(function(){
+
+    // LOAD CART FROM LOCALSTORAGE
+    var cart = [];
+
+    if(localStorage.getItem("cart") != null){
+        cart = JSON.parse(localStorage.getItem("cart"));
+        LoadCart();
+    }
+
+
+    // LOAD CART FUNCTION
+    function LoadCart(){
+
+        $("#cartItems").html("");
+
+        var total = 0;
+        var totalItems = 0;
+
+        // IF CART IS EMPTY
+        if(cart.length == 0){
+            $("#cartItems").html(`
+                <div class="text-center mt-5">
+                    <h4 class="text-muted">Your Cart is Empty</h4>
+                    <a href="products.html" class="btn btn-warning mt-3">
+                        Shop Now
+                    </a>
+                </div>
+            `);
+            $("#totalAmount").html("0");
+            $("#totalItems").html("0");
+            return;
+        }
+
+        // LOOP EACH PRODUCT
+        cart.forEach(function(product, index){
+
+            // IF NO QUANTITY SET DEFAULT TO 1
+            if(!product.quantity){
+                product.quantity = 1;
+            }
+
+            // CALCULATE TOTAL
+            total = total + (product.price * product.quantity);
+            totalItems = totalItems + product.quantity;
+
+            var item = `
+
+                <div class="card mb-3 shadow-sm">
+
+                    <div class="row g-0">
+
+                        <div class="col-3 text-center">
+                            <img src="${product.image}"
+                                 class="img-fluid cart-image p-3">
+                        </div>
+
+                        <div class="col-9">
+                            <div class="card-body">
+
+                                <h5>${product.title}</h5>
+
+                                <p class="text-muted">${product.category}</p>
+
+                                <h4 class="text-danger">₹ ${product.price}</h4>
+
+                                <!-- QUANTITY CONTROLS -->
+                                <div class="d-flex align-items-center gap-3 mb-3">
+
+                                    <button class="btn btn-outline-dark qty-btn"
+                                            onclick="ChangeQty(${index}, -1)">
+                                        −
+                                    </button>
+
+                                    <span class="fs-5 fw-bold">
+                                        ${product.quantity}
+                                    </span>
+
+                                    <button class="btn btn-outline-dark qty-btn"
+                                            onclick="ChangeQty(${index}, +1)">
+                                        +
+                                    </button>
+
+                                </div>
+
+                                <!-- ITEM TOTAL -->
+                                <p class="text-muted">
+                                    Item Total : 
+                                    ₹ ${(product.price * product.quantity).toFixed(2)}
+                                </p>
+
+                                <button class="btn btn-danger"
+                                        onclick="RemoveItem(${index})">
+                                    <span class="bi bi-trash"></span>
+                                    Remove
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            $("#cartItems").append(item);
+
+        });
+
+        // UPDATE TOTAL
+        $("#totalAmount").html(total.toFixed(2));
+        $("#totalItems").html(totalItems);
+
+    }
+
+
+    // CHANGE QUANTITY FUNCTION
+    window.ChangeQty = function(index, change){
+
+        // INCREASE OR DECREASE
+        cart[index].quantity = cart[index].quantity + change;
+
+        // IF QUANTITY GOES TO 0 - REMOVE ITEM
+        if(cart[index].quantity <= 0){
+            cart.splice(index, 1);
+        }
+
+        // SAVE TO LOCALSTORAGE
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        // RELOAD CART
+        LoadCart();
+
+    }
+
+
+    // REMOVE ITEM FUNCTION
+    window.RemoveItem = function(index){
+
+        cart.splice(index, 1);
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        LoadCart();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<title>Ishop Dashboard</title>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+      href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+<link rel="stylesheet"
+      href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+
+
+</head>
+
+<body class="bg-light">
+
+<div class="container-fluid">
+
+
+<div class="row">
+
+
+    <!-- SIDEBAR -->
+
+    <div class="col-2 bg-dark text-white vh-100 p-3">
+
+        <h4 class="mb-4">
+            <a href="products.html" 
+               class="text-warning text-decoration-none">
+                <span class="bi bi-shop"></span>
+                Ishop
+            </a>
+        </h4>
+
+        <ul class="nav flex-column">
+
+            <li class="nav-item mb-3">
+
+                <a href="dashboard.html"
+                   class="nav-link text-white">
+
+                    <span class="bi bi-speedometer2"></span>
+                    Dashboard
+
+                </a>
+
+            </li>
+
+
+            <li class="nav-item mb-3">
+
+                <a href="login.html"
+                   class="nav-link text-white">
+
+                    <span class="bi bi-box-arrow-in-right"></span>
+                    Login
+
+                </a>
+
+            </li>
+
+
+            <li class="nav-item mb-3">
+
+                <a href="register.html"
+                   class="nav-link text-white">
+
+                    <span class="bi bi-person-plus"></span>
+                    Register
+
+                </a>
+
+            </li>
+
+
+            <li class="nav-item mt-4">
+
+                <button class="btn btn-danger w-100"
+                        id="btnLogout">
+
+                    Logout
+
+                </button>
+
+            </li>
+
+        </ul>
+
+    </div>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="col-10">
+
+
+        <!-- HEADER -->
+
+        <div class="bg-primary text-white p-3 d-flex justify-content-between align-items-center">
+
+            <h3>
+
+                Ishop Dashboard
+
+            </h3>
+
+            <div>
+
+                Welcome :
+                <span id="lblUser"></span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CUSTOMER TABLE -->
+
+        <div class="container mt-4">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-dark text-white">
+
+                    <h4>
+
+                        Customer List
+
+                    </h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead class="table-secondary">
+
+                            <tr>
+
+                                <th>User Id</th>
+                                <th>User Name</th>
+                                <th>Age</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tblCustomers">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+<script>
+
+$(function(){
+
+
+    // CHECK LOGIN
+
+    if(localStorage.getItem("username")==null){
+
+        window.location.href = "login.html";
+
+    }
+
+
+    // SHOW USERNAME
+
+    $("#lblUser").html(
+        localStorage.getItem("username")
+    );
+
+
+
+    // LOAD CUSTOMERS
+
+    function LoadCustomers(){
+
+        $("#tblCustomers").html("");
+
+        $.ajax({
+
+            method: "GET",
+
+            url: "http://localhost:4400/customers",
+
+            success: function(customers){
+
+                console.log(customers);
+
+                customers.forEach(function(customer){
+
+                    var row = `
+                    
+                        <tr>
+
+                            <td>${customer.userid}</td>
+                            <td>${customer.username}</td>
+                            <td>${customer.age}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.mobile}</td>
+
+                        </tr>
+                    
+                    `;
+
+                    $("#tblCustomers").append(row);
+
+                });
+
+            },
+
+            error: function(){
+
+                alert("Unable to Load Customers");
+
+            }
+
+        });
+
+    }
+
+
+    LoadCustomers();
+
+
+
+    // LOGOUT
+
+    $("#btnLogout").click(function(){
+
+        localStorage.removeItem("username");
+
+        window.location.href = "login.html";
+
+    });
+
+});
+
+</script>
+
+</body>
+
+</html>

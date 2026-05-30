@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Product Details</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap/dist/css/bootstrap.css">
+
+    <link rel="stylesheet"
+          href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+
+    <style>
+
+        body {
+            background-color: #eaeded;
+        }
+
+        .product-image {
+            height: 350px;
+            object-fit: contain;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-4">
+
+    <a class="navbar-brand">
+        <span class="bi bi-shop"></span>
+        Ishop
+    </a>
+
+    <div>
+
+        <a href="products.html" class="btn btn-warning me-2">
+            <span class="bi bi-arrow-left"></span>
+            Back to Products
+        </a>
+
+        <a href="cart.html" class="btn btn-warning position-relative">
+            <span class="bi bi-cart3"></span>
+            Cart
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  id="cartCount">0</span>
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- PRODUCT DETAIL SECTION -->
+<div class="container mt-5">
+
+    <div class="row bg-white p-4 rounded shadow" id="productDetail">
+
+        <!-- LOADED BY AJAX -->
+
+    </div>
+
+</div>
+
+
+<script>
+
+$(function(){
+
+
+    // STEP 1 - READ PRODUCT ID FROM URL
+    // URL looks like: product-details.html?id=5
+    var urlParams = new URLSearchParams(window.location.search);
+    var productId = urlParams.get("id");
+
+
+    // STEP 2 - LOAD CART FROM LOCALSTORAGE
+    var cartItems = [];
+
+    if(localStorage.getItem("cart") != null){
+        cartItems = JSON.parse(localStorage.getItem("cart"));
+        $("#cartCount").html(cartItems.length);
+    }
+
+
+    // STEP 3 - FETCH SINGLE PRODUCT FROM FAKESTORE API
+    $.ajax({
+
+        method: "GET",
+        url: "https://fakestoreapi.com/products/" + productId,
+
+        success: function(product){
+
+            // SAVE PRODUCT IN GLOBAL VARIABLE
+            // This avoids JSON.stringify in onclick (which causes errors)
+            window.currentProduct = product;
+
+            var html = `
+
+                <div class="col-md-5 text-center p-4">
+
+                    <img src="${product.image}"
+                         class="img-fluid product-image">
+
+                </div>
+
+                <div class="col-md-7 p-4">
+
+                    <span class="badge bg-secondary text-capitalize mb-2">
+                        ${product.category}
+                    </span>
+
+                    <h3 class="mb-3">${product.title}</h3>
+
+                    <p class="text-muted">${product.description}</p>
+
+                    <h3 class="text-danger mb-2">
+                        ₹ ${product.price}
+                    </h3>
+
+                    <p class="mb-4">
+                        ⭐ ${product.rating.rate}
+                        <span class="text-muted">
+                            (${product.rating.count} reviews)
+                        </span>
+                    </p>
+
+                    <button class="btn btn-warning btn-lg w-100"
+                            id="btnAddToCart">
+                        <span class="bi bi-cart-plus"></span>
+                        Add To Cart
+                    </button>
+
+                </div>
+
+            `;
+
+            // LOAD HTML INTO PAGE
+            $("#productDetail").html(html);
+
+
+            // STEP 4 - ADD TO CART BUTTON CLICK
+            // Using jQuery click - no onclick in HTML - avoids all errors
+            $("#btnAddToCart").click(function(){
+
+                cartItems.push(window.currentProduct);
+
+                localStorage.setItem("cart", JSON.stringify(cartItems));
+
+                // UPDATE CART BADGE
+                $("#cartCount").html(cartItems.length);
+
+                alert(window.currentProduct.title + " Added To Cart!");
+
+            });
+
+        },
+
+        error: function(){
+            alert("Unable to load product details");
+        }
+
+    });
+
+
+});
+
+</script>
+
+</body>
+</html>
